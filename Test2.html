@@ -1,0 +1,59 @@
+Introduction:
+As has been stated in the description of the practical machine learning project this project consists of data collected from various wearable fitness devices as such as FitBit, JawBone, Nike Fuelband etc.. All this data is categorized as Human Activity Recognition and as a part of this they have tried to qualify instead of quantifying the workouts being performed by the users. In the model we are constructing they have collected information about the way people left dumbbells as a part of their exercise routine using various movement coordinate variables. The lifting of the dumbbell is then classified into 5 factors (or Classes)  namely 
+(i)	The correct method (Class A)
+(ii)	throwing the elbows to the front (Class B), 
+(iii)	lifting the dumbbell only halfway (Class C),
+(iv)	lowering the dumbbell only halfway (Class D) 
+(v)	throwing the hips to the front (Class E). 
+
+Read more: http://groupware.les.inf.puc-rio.br/har#ixzz3gxdJ2qD2 
+Preprocessing of the data:
+In order to begin with the data analysis we start by loading the required libraries and then loading the given datasets.
+
+##Loading libraries
+# library(caret)
+# library(randomForest)
+# library(rpart)
+# library(rpart.plot)
+
+##Reading in the datasets
+
+# modeldata<-read.csv("pml-training.csv",na.strings = c("NA", ""))
+# modeldataTest<-read.csv("pml-testing.csv",na.strings = c("NA", ""))
+
+Then we clean the datasets by reducing the number of unwanted variables. We get rid of those which consists of mostly missing values and also eliminate certain numeric variables like date timestamp which do not add much value to this particular predictive model.
+##Removing variables which has missing values for all the rows
+# rm_var = sapply(Training2, function(x) {sum(is.na(x))})
+# table(rm_var)
+# rm_columns = names(rm_var[rm_var==13436]) ###100 of the columns have 13436 rows with missing values - this was the result of the table function
+# Training2 = Training2[, !names(Training2) %in% rm_columns]
+# str(Training2)
+
+##Removing other unwanted numeric variables such as timestamp
+
+# Training2<-Training2[c(-1,-3,-4,-5)]
+Cross Validation of the data:
+We split up the given cleaned dataset into testing and training sets and use a 70:30 split, in order to cross validate our predictive model.
+##Partitioning the Training dataset into 70% training and 30% testing sets
+# inTrain <- createDataPartition(y=modeldata$classe, p=0.7, list=FALSE)
+# Training2 <- modeldata[inTrain, ]
+# Testing2 <- modeldata[-inTrain, ]
+
+Predictive Models:  
+We now use Random Forest and Decision Trees machine leaning algorithms to predict the class of the weight lift depending on the various accelerometer readings.
+##Predicting using ML packages
+##Decision Trees
+# set.seed(333)
+# modelfitDT <- rpart(classe ~ ., data=Training2, method="class")
+# rpart.plot(modelfitDT)
+# predictDT<- predict(modelfitDT,Testing2,type = "class")
+# confusionMatrix(predictDT, Testing2$classe)
+
+##Random Forests - with cross validation
+# modelfitRF<-train(Training2$classe ~ ., method="rf", trControl=trainControl(method = "cv", number = 4), data=Training2)
+# print(modelfitRF, digits=3)
+# predictRF<- predict(modelfitRF,newdata = Testing2)
+# confusionMatrix(predictRF, Testing2$classe)
+
+
+
