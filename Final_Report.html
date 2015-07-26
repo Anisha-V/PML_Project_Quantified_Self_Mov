@@ -100,7 +100,7 @@ summary(modeldata$classe)</code></pre>
 rm_var = sapply(Training2, function(x) {sum(is.na(x))})
 table(rm_var)</code></pre>
 <pre><code>## rm_var
-##     0 13470 
+##     0 13456 
 ##    60   100</code></pre>
 <pre class="r"><code>rm_columns = names(rm_var[rm_var==13458]) ###100 of the columns have 13458 rows with missing values - this was the result of the table function when it was executed step by step
 Training2 = Training2[, !names(Training2) %in% rm_columns]
